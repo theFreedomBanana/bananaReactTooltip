@@ -1,8 +1,13 @@
+import classnames from "classnames";
 import React, { CSSProperties, memo, useCallback, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 
 // #region TYPES
 export interface BananaTooltipProps {
+	/**
+	 * An optionnal animation to when the tooltip appears
+	 */
+	readonly animation?: "ease-in" | "ease-out" | "linear";
 	/**
 	 * The element to apply the tooltip
 	 */
@@ -24,14 +29,29 @@ export interface BananaTooltipProps {
 
 // #region CONSTANTS
 const useStyles = createUseStyles({
+	"@keyframes enter": {
+		"0%": {
+			opacity: 0.1,
+			transform: "scale(0)",
+		},
+		"100%": {
+			opacity: 1,
+			transform: "scale(1)",
+		},
+	},
 	component__container: {
 		"&:hover": {
-			"& $tooltip": { display: "block" },
-			cursor: "pointer",
+			"& $tooltip": { cursor: "pointer", display: "block" },
+			"& $tooltip--animated": { "animation-duration": "0.2s", "animation-name": "$enter" },
+			"& $tooltip--easeIn": { "animation-timing-function": "ease-in" },
+			"& $tooltip--easeOut": { "animation-timing-function": "ease-out" },
+			"& $tooltip--linear": { "animation-timing-function": "linear" },
 		},
 		position: "relative",
 	},
 	tooltip: { display: "none", position: "absolute", width: "fit-content" },
+	"tooltip--animated": {},
+	"tooltip--linear": {},
 });
 
 // So sad I didn't find how to pass "containedPosition" as a useStyles prop :(
@@ -144,7 +164,7 @@ const tooltipPosition = (elementReference: React.RefObject<HTMLElement>, positio
  * A simple React tooltip component
  */
 export const BananaTooltip = memo(
-	({ children, content, delay, position }: BananaTooltipProps) => {
+	({ animation, children, content, delay, position }: BananaTooltipProps) => {
 		const childElement = React.Children.only(children);
 		const contentElement = React.Children.only(content);
 		const childRef = useRef<HTMLElement>(null);
@@ -196,7 +216,12 @@ export const BananaTooltip = memo(
 					React.cloneElement(
 						contentElement,
 						{
-							className: `${classes.tooltip} ${contentElement.props.className}`,
+							className: classnames(
+								classes.tooltip,
+								contentElement.props.className,
+								animation ? classes["tooltip--animated" as keyof typeof classes] : "",
+								animation ? `${classes["tooltip--animated"]} ${classes[(`tooltip--${animation}` as keyof typeof classes)]}` : "",
+							),
 							style: childRef ? tooltipPosition(childRef, position) : {},
 						}
 					)
@@ -207,3 +232,4 @@ export const BananaTooltip = memo(
 	},
 );
 // #endregion
+
