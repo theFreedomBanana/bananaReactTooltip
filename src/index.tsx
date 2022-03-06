@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 
 // #region TYPES
-interface BananaTooltipProps {
+export interface BananaTooltipProps {
 	/**
 	 * The element to apply the tooltip
 	 */
@@ -23,7 +23,7 @@ const useStyles = createUseStyles({
 		},
 		position: "relative",
 	},
-	tooltip__container: { display: "none", position: "absolute" },
+	tooltip__container: { display: "none", position: "absolute", width: "fit-content" },
 });
 // #endregion
 
@@ -33,10 +33,11 @@ const useStyles = createUseStyles({
  */
 export const BananaTooltip = memo(
 	({ children, content }: BananaTooltipProps) => {
-		const classes = useStyles();
-		const ref = useRef<HTMLDivElement | null>(null);
+		const childElement = React.Children.only(children);
+		const ref = useRef<HTMLElement>(null);
 		const rerender = useState(false)[1];
-		const containerPosition = ref?.current?.getBoundingClientRect();
+		const elementPosition = ref?.current?.getBoundingClientRect();
+		const classes = useStyles();
 
 		useEffect(
 			() => {
@@ -48,10 +49,18 @@ export const BananaTooltip = memo(
 
 		// #region RENDERING
 		return (
-			<div className={classes.component__container} ref={ref}>
-				{children}
-				{containerPosition && (
-					<div className={classes.tooltip__container}>{content}</div>
+			<div className={classes.component__container} >
+				{React.cloneElement(childElement, { ref: ref })}
+				{elementPosition && (
+					<div
+						className={classes.tooltip__container}
+						style={{
+							bottom: `${elementPosition.height + 10}px`,
+							left: 0,
+						}}
+					>
+						{content}
+					</div>
 				)}
 			</div>
 		);
