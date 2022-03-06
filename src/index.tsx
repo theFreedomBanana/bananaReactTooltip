@@ -147,10 +147,10 @@ export const BananaTooltip = memo(
 	({ children, content, delay, position }: BananaTooltipProps) => {
 		const childElement = React.Children.only(children);
 		const contentElement = React.Children.only(content);
-		const ref = useRef<HTMLElement>(null);
+		const childRef = useRef<HTMLElement>(null);
 		const rerender = useState(false)[1];
 		const [isTimeoutOver, setTimeoutOver] = useState<boolean>(delay ? false : true);
-		const childPosition = ref?.current?.getBoundingClientRect();
+		const childPosition = childRef?.current?.getBoundingClientRect();
 		const classes = useStyles();
 
 		useEffect(
@@ -189,7 +189,7 @@ export const BananaTooltip = memo(
 								setTimeoutOver(false);
 							}
 						},
-						ref: ref,
+						ref: childRef,
 					}
 				)}
 				{childPosition && isTimeoutOver && (
@@ -197,7 +197,7 @@ export const BananaTooltip = memo(
 						contentElement,
 						{
 							className: `${classes.tooltip} ${contentElement.props.className}`,
-							style: ref ? tooltipPosition(ref, position) : {},
+							style: childRef ? tooltipPosition(childRef, position) : {},
 						}
 					)
 				)}
