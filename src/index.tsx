@@ -1,4 +1,4 @@
-import React, { CSSProperties, memo, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, memo, useCallback, useEffect, useRef, useState } from "react";
 import { createUseStyles } from "react-jss";
 
 // #region TYPES
@@ -11,6 +11,10 @@ export interface BananaTooltipProps {
 	 * An element to display when hovering the tooltip children
 	 */
 	readonly content: JSX.Element;
+	/**
+	 * A delay in milliseconds before the components shows
+	 */
+	readonly delay?: number;
 	/**
 	 * Defines where the tooltip should be displayed according to the children position
 	 */
@@ -144,6 +148,7 @@ export const BananaTooltip = memo(
 		const childElement = React.Children.only(children);
 		const ref = useRef<HTMLElement>(null);
 		const rerender = useState(false)[1];
+		const [isTimeoutOver, setTimeoutOver] = useState<boolean>(delay ? false : true);
 		const childPosition = ref?.current?.getBoundingClientRect();
 		const classes = useStyles();
 
@@ -155,11 +160,37 @@ export const BananaTooltip = memo(
 			[rerender],
 		);
 
+		const timeoutBeforeDisplay = useCallback(
+			(timeout: number) => {
+				setTimeout(
+					() => {
+						setTimeoutOver(true);
+					},
+					timeout,
+				);
+			},
+			[setTimeoutOver],
+		);
+
 		// #region RENDERING
 		return (
 			<div className={classes.component__container} >
-				{React.cloneElement(childElement, { ref: ref })}
-				{childPosition && (
+				{React.cloneElement(
+					childElement,
+					{
+						onMouseEnter: () => {
+							if (delay) {
+								timeoutBeforeDisplay(delay);
+							}
+						},
+						onMouseLeave: () => {
+							if (delay) {
+								setTimeoutOver(false);
+							}
+						},
+						ref: ref,
+					})}
+				{childPosition && isTimeoutOver && (
 					<div
 						className={classes.tooltip__container}
 						style={ref ? tooltipPosition(ref, position) : {}}

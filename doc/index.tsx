@@ -34,6 +34,14 @@ const DocApp = () => {
 							<h3 className={classes.doc__exampleTitle}>With style</h3>
 						</div>
 					</BananaTooltip>
+					<BananaTooltip
+						content={<div className={classes.doc__exampleTooltip}>Hello World!</div>}
+						delay={750}
+					>
+						<div>
+							<h3 className={classes.doc__exampleTitle}>With delay</h3>
+						</div>
+					</BananaTooltip>
 				</div>
 				<div className={classes.doc__exampleContainer}>
 					{(["topStart", "top", "topEnd"] as BananaTooltipProps["position"][]).map((position) => (
