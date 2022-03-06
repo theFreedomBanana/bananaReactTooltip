@@ -31,7 +31,7 @@
 	"name": "banana-tooltip",
 	"version": "1.0.0",
 	"scripts": {
-		"dev-server": "webpack-dev-server --config scripts/dev-config.js --color --progress --stats-error-details"
+		"doc-server": "webpack-dev-server --config scripts/dev-config.js --color --progress --stats-error-details"
 	},
 	"keywords": [
 		"React",

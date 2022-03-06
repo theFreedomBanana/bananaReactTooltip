@@ -40,7 +40,7 @@ module.exports = (env) => {
 		entry: [
 			"react-hot-loader/patch",
 			"url-search-params-polyfill",
-			"./src/index.tsx",
+			"./doc/index.tsx",
 		],
 		/**
 		 * Defines which mode Webpack is on.
@@ -101,7 +101,7 @@ module.exports = (env) => {
 			//  * Creates an index.html file on the fly using the provided file as template.
 			//  * It adds <link> and <script> tags for every created depency.
 			//  */
-			new HTMLWebpackPlugin({ template: "./src/index.html" }),
+			new HTMLWebpackPlugin({ template: "./doc/index.html" }),
 		],
 		/**
 		 * Defines how Webpack will resolve imported modules.
