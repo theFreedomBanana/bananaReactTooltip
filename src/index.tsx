@@ -26,12 +26,12 @@ export interface BananaTooltipProps {
 const useStyles = createUseStyles({
 	component__container: {
 		"&:hover": {
-			"& $tooltip__container": { display: "block" },
+			"& $tooltip": { display: "block" },
 			cursor: "pointer",
 		},
 		position: "relative",
 	},
-	tooltip__container: { display: "none", position: "absolute", width: "fit-content" },
+	tooltip: { display: "none", position: "absolute", width: "fit-content" },
 });
 
 // So sad I didn't find how to pass "containedPosition" as a useStyles prop :(
@@ -146,6 +146,7 @@ const tooltipPosition = (elementReference: React.RefObject<HTMLElement>, positio
 export const BananaTooltip = memo(
 	({ children, content, delay, position }: BananaTooltipProps) => {
 		const childElement = React.Children.only(children);
+		const contentElement = React.Children.only(content);
 		const ref = useRef<HTMLElement>(null);
 		const rerender = useState(false)[1];
 		const [isTimeoutOver, setTimeoutOver] = useState<boolean>(delay ? false : true);
@@ -189,14 +190,16 @@ export const BananaTooltip = memo(
 							}
 						},
 						ref: ref,
-					})}
+					}
+				)}
 				{childPosition && isTimeoutOver && (
-					<div
-						className={classes.tooltip__container}
-						style={ref ? tooltipPosition(ref, position) : {}}
-					>
-						{content}
-					</div>
+					React.cloneElement(
+						contentElement,
+						{
+							className: `${classes.tooltip} ${contentElement.props.className}`,
+							style: ref ? tooltipPosition(ref, position) : {},
+						}
+					)
 				)}
 			</div>
 		);
