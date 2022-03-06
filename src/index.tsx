@@ -6,15 +6,15 @@ export interface BananaTooltipProps {
 	/**
 	 * The element to apply the tooltip
 	 */
-	children: JSX.Element;
+	readonly children: JSX.Element;
 	/**
 	 * An element to display when hovering the tooltip children
 	 */
-	content: JSX.Element;
+	readonly content: JSX.Element;
 	/**
 	 * Defines where the tooltip should be displayed according to the children position
 	 */
-	position?: "bottom" | "bottomEnd" | "bottomStart" | "left" | "leftEnd" | "leftStart" | "right" | "rightEnd" | "rightStart" | "top" | "topEnd" | "topStart";
+	readonly position?: "bottom" | "bottomEnd" | "bottomStart" | "left" | "leftEnd" | "leftStart" | "right" | "rightEnd" | "rightStart" | "top" | "topEnd" | "topStart";
 }
 // #endregion
 
@@ -140,7 +140,7 @@ const tooltipPosition = (elementReference: React.RefObject<HTMLElement>, positio
  * A simple React tooltip component
  */
 export const BananaTooltip = memo(
-	({ children, content, position }: BananaTooltipProps) => {
+	({ children, content, delay, position }: BananaTooltipProps) => {
 		const childElement = React.Children.only(children);
 		const ref = useRef<HTMLElement>(null);
 		const rerender = useState(false)[1];
